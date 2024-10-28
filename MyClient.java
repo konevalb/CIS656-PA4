@@ -1,13 +1,11 @@
 
 import java.rmi.*;
-import java.io.Serializable;
 import java.util.Scanner;
 
-public class MyClient implements Callback, Serializable {
+public class MyClient {
     public static void main(String[] args) {
         try {
-            Method stub = (Method) Naming.lookup("rmi://localhost:5000/lab6");
-            stub.registerCallback(new MyClient());
+            Method stub = (Method) Naming.lookup("rmi://localhost:1099/lab6");
 
             Scanner scanner = new Scanner(System.in);
             String input;
@@ -18,21 +16,22 @@ public class MyClient implements Callback, Serializable {
 
                 if (input.isEmpty()) break;
 
-                String response = input.equalsIgnoreCase("time") ?
-                                  stub.getTime() : stub.capitalize(input);
-
+                String response = stub.action(input);
                 System.out.println("Using RMI: " + response);
+
+
+                CallbackImplementation callback = new CallbackImplementation();
+                stub.registerCallback(callback, input);
+
             }
 
+            scanner.close();
+
             System.out.println("Client exiting...");
+            System.exit(0);
         } catch (Exception e) {
             System.out.println("Client exception: " + e);
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onCallback(String message) throws RemoteException {
-        System.out.println("Using Callback: " + message);
     }
 }
