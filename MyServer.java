@@ -5,6 +5,7 @@ import java.rmi.registry.*;
 public class MyServer {
     public static void main(String[] args) {
         try {
+            LocateRegistry.createRegistry(1099);
             MethodRemote stub = new MethodRemote();
             Naming.rebind("rmi://localhost:1099/lab6", stub);
             System.out.println("The Server is running!");
